@@ -66,6 +66,33 @@ describe('server', function() {
     });
   });
 
+  it('should respond with rooms that were previously posted', function(done) {
+    var requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Jono',
+        message: 'Do my bidding!',
+        room: 'Westworld'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      // Now if we request the log, that message we posted should be there:
+      request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+        var messages = JSON.parse(body).results;
+        var count = 0;
+
+        for (let message of messages) {
+          if (message.room && message.room === 'Westworld') {
+            count++;
+          }
+        }
+
+        expect(count).to.equal(1);
+        done();
+      });
+    });
+  });
+
   it('Should 404 when asked for a nonexistent endpoint', function(done) {
     request('http://127.0.0.1:3000/arglebargle', function(error, response, body) {
       expect(response.statusCode).to.equal(404);
