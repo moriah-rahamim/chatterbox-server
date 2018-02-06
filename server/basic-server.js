@@ -1,6 +1,7 @@
 /* Import node's http module: */
 var http = require('http');
-var handleRequest = require('./request-handler.js');
+var handler = require('./request-handler.js');
+var handleRequest = handler.requestHandler;
 var stubs = require('./spec/Stubs.js');
 
 
