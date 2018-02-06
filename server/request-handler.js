@@ -19,20 +19,53 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var messages = [];
+
 var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
   var statusCode = 200;
 
+  // If the request throws an error,
+  //  * log the error info to the console
+  //  * set a 400 status
+  //  * end execution
+  request.on('error', (error) => {
+    console.error(error);
+    response.statusCode = 400;
+    response.end();
+  });
+
+  // If the response throws an error,
+  //  * log the error
+  response.on('error', (error) => {
+    console.error(error);
+  });
+
+
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
-      var body = {};
-      body.results = [];
+      var body = {
+        results: messages
+      };
       var bodyString = JSON.stringify(body);
       headers['Content-Type'] = 'application/json';
     }
 
-
     if (request.method === 'POST') {
+      // Array to hold data chunks as they come in
+      var message = [];
+
+      // If the request has data, push the chunk into the message
+      // Ongoing, until we have all the data
+      request.on('data', (chunk) => {
+        message.push(chunk);
+      }).on('end', () => {
+        // Re-combine the data and stringify it
+        message = Buffer.concat(message).toString();
+        // Parse the json string and add to messages
+        messages.push(JSON.parse(message));
+      });
+
       statusCode = 201;
     }
 
@@ -42,7 +75,6 @@ var requestHandler = function(request, response) {
   }
 
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-  console.log('request', request.headers);
 
   response.writeHead(statusCode, headers);
   
