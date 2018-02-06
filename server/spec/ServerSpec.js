@@ -56,7 +56,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should accept posts to /classes/room', function() {
+  it('Should accept posts to /classes/messages', function() {
     var stubMsg = {
       username: 'Jono',
       message: 'Do my bidding!'
@@ -73,6 +73,28 @@ describe('Node Server Request Listener Function', function() {
     // TODO: Replace with with a valid test
     // expect(res._data).to.equal(JSON.stringify('\n'));
     expect(res._ended).to.equal(true);
+  });
+
+  it('Should accept posts to /classes/room', function() {
+    var stubMsg = {
+      username: 'Jono',
+      message: 'Do my bidding!',
+      room: 'Wonderland'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    // Expect 201 Created response status
+    expect(res._responseCode).to.equal(201);
+    expect(res._data.room).to.equal('Wonderland');
+
+    // Testing for a newline isn't a valid test
+    // TODO: Replace with with a valid test
+    // expect(res._data).to.equal(JSON.stringify('\n'));
+    expect(res._ended).to.equal(true);
+
   });
 
   it('Should respond with messages that were previously posted', function() {

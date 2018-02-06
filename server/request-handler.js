@@ -26,6 +26,7 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var headers = defaultCorsHeaders;
   var statusCode = 200;
+  var responseData;
 
   // If the request throws an error,
   //  * log the error info to the console
@@ -50,7 +51,7 @@ var requestHandler = function(request, response) {
       var body = {
         results: messages
       };
-      var bodyString = JSON.stringify(body);
+      responseData = JSON.stringify(body);
       headers['Content-Type'] = 'application/json';
     }
 
@@ -67,7 +68,8 @@ var requestHandler = function(request, response) {
         // Re-combine the data and stringify it
         message = message.join('');
         // Parse the json string and add to messages
-        messages.push(JSON.parse(message));
+        responseData = JSON.parse(message);
+        messages.push(responseData);
       });
 
       statusCode = 201;
@@ -78,7 +80,7 @@ var requestHandler = function(request, response) {
 
   response.writeHead(statusCode, headers);
   
-  response.end(bodyString);
+  response.end(responseData);
 };
 
 exports.requestHandler = requestHandler;
