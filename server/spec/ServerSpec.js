@@ -138,4 +138,31 @@ describe('Node Server Request Listener Function', function() {
       });
   });
 
+  it('Should 400 when given bad url', function() {
+    var req = new stubs.request(['/arglebargle'], 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(400);
+      });
+  });
+
+  it('Should 400 when given bad method', function() {
+    var req = new stubs.request('/arglebargle', ['GET']);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(400);
+      });
+  });
 });

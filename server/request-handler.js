@@ -20,7 +20,6 @@ var defaultCorsHeaders = {
 };
 
 var messages = [];
-var rooms = [];
 
 var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
@@ -32,11 +31,11 @@ var requestHandler = function(request, response) {
   //  * log the error info to the console
   //  * set a 400 status
   //  * end execution
-  // request.on('error', (error) => {
-  //   console.error(error);
-  //   response.statusCode = 400;
-  //   response.end();
-  // });
+  if (request === undefined || typeof request.method !== 'string' || typeof request.url !== 'string') {
+    console.error('bad request!');
+    response.statusCode = 400;
+    response.end();
+  }
 
   // // If the response throws an error,
   // //  * log the error
