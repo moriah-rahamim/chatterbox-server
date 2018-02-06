@@ -64,10 +64,12 @@ var requestHandler = function(request, response) {
         message.push(chunk.toString());
       });
       request.on('end', () => {
+        let time = (new Date()).toString;
         // Re-combine the data and stringify it
         message = message.join('');
         // Parse the json string and add to messages
         responseData = JSON.parse(message);
+        responseData.timeStamp = time;
         messages.push(responseData);
       });
 
