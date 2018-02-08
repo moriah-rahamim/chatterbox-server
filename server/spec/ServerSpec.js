@@ -75,7 +75,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should accept posts to /classes/room', function() {
+  it('Should accept posts to /classes/messages with a room', function() {
     var stubMsg = {
       username: 'Jono',
       message: 'Do my bidding!',
@@ -85,10 +85,12 @@ describe('Node Server Request Listener Function', function() {
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
-
+    
     // Expect 201 Created response status
     expect(res._responseCode).to.equal(201);
-    expect(res._data.room).to.equal('Wonderland');
+    // Expect correct room to be in the message in response
+    var data = JSON.parse(res._data);
+    expect(data.room).to.equal('Wonderland');
 
     // Testing for a newline isn't a valid test
     // TODO: Replace with with a valid test
@@ -97,7 +99,7 @@ describe('Node Server Request Listener Function', function() {
 
   });
 
-  it('Should accept posts to /classes/room', function() {
+  it('Should add a timestamp to a POST request', function() {
     var stubMsg = {
       username: 'Jono',
       message: 'Do my bidding!'
@@ -109,11 +111,8 @@ describe('Node Server Request Listener Function', function() {
 
     // Expect 201 Created response status
     expect(res._responseCode).to.equal(201);
-    expect(res._data.timeStamp).to.exist;
-
-    // Testing for a newline isn't a valid test
-    // TODO: Replace with with a valid test
-    // expect(res._data).to.equal(JSON.stringify('\n'));
+    var data = JSON.parse(res._data);
+    expect(data.timestamp).to.exist;
     expect(res._ended).to.equal(true);
 
   });
